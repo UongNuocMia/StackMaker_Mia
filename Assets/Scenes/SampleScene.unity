@@ -962,9 +962,8 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 859243281}
-  - component: {fileID: 859243282}
   m_Layer: 5
-  m_Name: ResultPanel (1)
+  m_Name: EndGamePanel
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -992,21 +991,6 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
---- !u!114 &859243282
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 859243280}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 47673d3ffeba5fe4d964ca35e002c469, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  scoreText: {fileID: 355842392}
-  nextLevel: {fileID: 0}
-  tryAgainLevel: {fileID: 0}
 --- !u!1 &863430864
 GameObject:
   m_ObjectHideFlags: 0
@@ -2467,6 +2451,7 @@ MonoBehaviour:
   resultPanelUI: {fileID: 194737286}
   settingPanelUI: {fileID: 2120827819}
   inGamePanelUI: {fileID: 1801069512}
+  EndGamePanel: {fileID: 0}
 --- !u!1 &1794069784
 GameObject:
   m_ObjectHideFlags: 0
