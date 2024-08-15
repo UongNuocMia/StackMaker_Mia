@@ -1,114 +1,124 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Net;
+using System.Threading;
+using TMPro;
+using Unity.VisualScripting;
 using UnityEngine;
-
-
-public enum Direction
-{
-    None,
-    Forward,
-    Down,
-    Left,
-    Right,
-}
-
 
 public class Player : MonoBehaviour
 {
-    private Vector2 onClickPosition;
-    private Vector2 onReleaseClickPosition;
-    private Vector3 dirFromSwipe;
-    private Direction direction;
+    [SerializeField] private PlayerMovement playerMovement;
+    [SerializeField] private Transform playerVisual;
+    [SerializeField] private Transform brickPerfab;
+    private List<Transform> brickList = new();
+    private float heightOfBrick = 0.3f;
+    private Vector3 targetPosition;
+    private Transform brickOnBridge;
+    private bool isOnBridge = false;
 
-    private float sensitivityThreshold = 50f; // Giá trị ngưỡng nhạy mặc định
+    public int BrickListCount => brickList.Count;
+    public bool IsOnBridge => isOnBridge;
 
     private void Start()
     {
-        direction = Direction.None;
+        targetPosition = playerVisual.localPosition;
     }
-    // Update is called once per frame
+
     private void Update()
     {
-        if (Input.GetMouseButtonDown(0))
-        {
-            onClickPosition = Input.mousePosition;
-        }
-        if (Input.GetMouseButtonUp(0))
-        {
-            onReleaseClickPosition = Input.mousePosition;
-            PlayerHandlerMoveMent();
-        }
-
-        Move();
+        RayCastScan();
     }
 
-    private void PlayerHandlerMoveMent()
+    public void RayCastScan()
     {
+        Debug.DrawRay(transform.position, Vector3.down * 0.5f, Color.red);
 
-        dirFromSwipe = onReleaseClickPosition - onClickPosition;
+        float interactRange = 0.5f;
+        Vector3 direction = playerMovement.GetDirection();
+        RaycastHit hit;
+        if (Physics.Raycast(transform.position, direction, out hit, interactRange))
+        {
+            Debug.Log("hit info name____" + hit.transform.gameObject.name);
 
-        if (dirFromSwipe.magnitude < sensitivityThreshold)
+            if (hit.transform.TryGetComponent(out Brick brick))
+            {
+
+                CheckBrick(brick);
+            }
+            if (hit.transform.TryGetComponent(out Bridge bridge) && BrickListCount > 0)
+            {
+                CheckBridge(bridge);
+            }
+            if (hit.transform.TryGetComponent(out EndLevel endLevel))
+            {
+                OnFinishGame();
+            }
+        }
+    }
+    private void AddBrick()
+    {
+        Transform brickClone = Instantiate(brickPerfab, transform);
+        brickList.Add(brickClone);
+        brickClone.localPosition = Vector3.zero;
+        GameManager.Instance.score++;
+    }
+    private void RemoveBrick()
+    {
+        if (brickList.Count == 0)
             return;
+        int lastIndex = brickList.Count - 1;
+        brickList[lastIndex].GetComponent<Brick>().HideVisual();
+        brickList.RemoveAt(lastIndex);
+    }
 
-        // Tính góc của vector dịch chuyển so với trục x
-        float angle = Mathf.Atan2(dirFromSwipe.y, dirFromSwipe.x) * Mathf.Rad2Deg;
-
-        // Thiết lập ngưỡng góc (ví dụ: 45 độ)
-        float angleThreshold = 45f;
-
-
-        if (angle > -angleThreshold && angle < angleThreshold)
+    private void HandlerPlayerHeight()
+    {
+        if (playerVisual.localPosition.y == targetPosition.y && isOnBridge)
         {
-            // Vuốt chủ yếu theo hướng phải
-            Debug.Log("Vuốt phải");
-            direction = Direction.Right;
+            playerVisual.localPosition = new Vector3(playerVisual.localPosition.x,
+                                                     playerVisual.localPosition.y + heightOfBrick,
+                                                     playerVisual.localPosition.z);
         }
-        else if (angle > angleThreshold && angle < 135)
-        {
-            // Vuốt chủ yếu theo hướng lên
-            Debug.Log("Vuốt lên");
-            direction = Direction.Forward;
-        }
-        else if (angle > 135 || angle < -135)
-        {
-            // Vuốt chủ yếu theo hướng trái
-            Debug.Log("Vuốt trái");
-            direction = Direction.Left;
 
-        }
-        else if (angle > -135 && angle < -45)
+        Vector3 newPlayerHeight = Vector3.zero;
+        newPlayerHeight.y = Mathf.Abs(brickList.Count * heightOfBrick) + targetPosition.y;
+        playerVisual.localPosition = newPlayerHeight;
+    }
+    private void HandlerBrickHeight()
+    {
+        if (brickList.Count == 0) return;
+        Vector3 newHeightY = new();
+        for (int i = 0; i < brickList.Count; i++)
         {
-            // Vuốt chủ yếu theo hướng xuống
-            Debug.Log("Vuốt xuống");
-            direction = Direction.Down;
-
+            newHeightY.y = Mathf.Abs(i * heightOfBrick);
+            brickList[i].localPosition = new Vector3(newHeightY.x, newHeightY.y);
         }
     }
-    private void Move()
-    {
-        Vector3 newPosition = transform.position;
-        switch (direction)
-        {
-            case Direction.None:
-                return;
-            case Direction.Forward:
-                newPosition.x += 1;
-                break;
-            case Direction.Down:
-                newPosition.x += -1;
-                break;
-            case Direction.Left:
-                newPosition.z += 1;
-                break;
-            case Direction.Right:
-                newPosition.z += -1;
-                break;
-            default:
-                break;
-        }
-        transform.position = newPosition;
-        direction = Direction.None;
 
+
+  
+    public void CheckBrick(Brick brick)
+    {
+        brick.HideVisual();
+        brick.CollisionOff();
+        AddBrick();
+        HandlerPlayerHeight();
+        HandlerBrickHeight();
+    }
+    private void CheckBridge(Bridge bridge)
+    {
+        if (!bridge.IsBrickEnable())
+            RemoveBrick();
+
+        bridge.ShowBrickOnBridge();
+        isOnBridge = true;
+        HandlerPlayerHeight();
+    }
+
+    private void OnFinishGame()
+    {
+        GameManager.Instance.OnFinishGame();
     }
 }
