@@ -1,5 +1,3 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -24,8 +22,7 @@ public class ResultPanelUI : MonoBehaviour
 
     private void NextLevelOnClick()
     {
-        GameManager.Instance.currentLevel++;
-        GameManager.Instance.OnStartGame();
+        GameManager.Instance.OnNextLevel();
     }
 
     private void ShowScore()

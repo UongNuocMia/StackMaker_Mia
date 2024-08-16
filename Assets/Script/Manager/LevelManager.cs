@@ -8,9 +8,7 @@ public class LevelManager : Singleton<LevelManager>
     private GameObject currentMap;
     private Transform currentStartPoint;
     private Transform currentEndPoint;
-
     public bool isEndGame => GameManager.Instance.currentLevel >= levelList.Count;
-
     public void OnLoadMap(int level)
     {
         if (level <= levelList.Count)
@@ -27,7 +25,6 @@ public class LevelManager : Singleton<LevelManager>
             return;
         Destroy(currentMap);
     }
-
     public Vector3 GetCurrentStartPoint()
     {
         return currentStartPoint.localPosition;

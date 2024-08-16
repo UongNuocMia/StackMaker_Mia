@@ -13,7 +13,7 @@ GameObject:
   - component: {fileID: 3705190838501000524}
   m_Layer: 0
   m_Name: Bridge
-  m_TagString: Untagged
+  m_TagString: Bridge
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -67,8 +67,8 @@ BoxCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Size: {x: 2.390103, y: 0.7773674, z: 1}
-  m_Center: {x: -0.023016572, y: -0.007839173, z: 0}
+  m_Size: {x: 2.3, y: 1.03, z: 1}
+  m_Center: {x: 0, y: -0.17, z: 0}
 --- !u!1001 &4968464721802371821
 PrefabInstance:
   m_ObjectHideFlags: 0

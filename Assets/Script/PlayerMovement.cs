@@ -1,8 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using System.Threading;
-using Unity.VisualScripting;
-using UnityEngine;
+﻿using UnityEngine;
 
 public enum Direction
 {
@@ -23,35 +19,36 @@ public class PlayerMovement : MonoBehaviour
     private Vector3 dirFromSwipe;
     private Vector3 targetPosition;
     private Direction directionMove;
-    private Direction directionCanMoveOnBridge;
     private float sensitivityThreshold = 50f; // Giá trị ngưỡng nhạy mặc định
-    private Rigidbody rb;
     private float timer = 10;
+    private int brickOnBridge = 0;
+
+    public Direction DirectionMove { get => directionMove; set => directionMove = value; }
 
     private void Start()
     {
-        rb = gameObject.GetComponent<Rigidbody>();
         directionMove = Direction.None;
         targetPosition = transform.position;
     }
     // Update is called once per frame
     private void Update()
     {
-        Debug.DrawRay(transform.position, GetDirection() * 10, Color.red);
+        Debug.DrawRay(transform.position, GetDirection() * 10, Color.yellow);
 
-        directionCanMoveOnBridge = CheckDirection(directionMove);
-        if (Input.GetMouseButtonDown(0))
+        if (transform.position == targetPosition)
         {
-            onClickPosition = Input.mousePosition;
+            if (Input.GetMouseButtonDown(0))
+            {
+                onClickPosition = Input.mousePosition;
+            }
+            if (Input.GetMouseButtonUp(0) && GameManager.IsState(GameState.GamePlay))
+            {
+                onReleaseClickPosition = Input.mousePosition;
+                timer = 10;
+                InputHandler();
+                Move();
+            }
         }
-        if (Input.GetMouseButtonUp(0) && GameManager.IsState(GameState.GamePlay))
-        {
-            onReleaseClickPosition = Input.mousePosition;
-            timer = 10;
-            InputHandler();
-            Move();
-        }
-
         transform.position = Vector3.MoveTowards(transform.position, targetPosition, speed * Time.deltaTime);
     }
 
@@ -60,39 +57,41 @@ public class PlayerMovement : MonoBehaviour
         dirFromSwipe = onReleaseClickPosition - onClickPosition;
         if (dirFromSwipe.magnitude < sensitivityThreshold)
             return;
-
-        // Tính góc của vector dịch chuyển so với trục x
         float angle = Mathf.Atan2(dirFromSwipe.y, dirFromSwipe.x) * Mathf.Rad2Deg;
-
-        // Thiết lập ngưỡng góc
         float angleThreshold = 45f;
+
+        Direction direction = Direction.None;
 
         if (angle > -angleThreshold && angle < angleThreshold)
         {
-            Debug.Log("Vuốt phải");
-            directionMove = Direction.Right;
+            //right
+            direction = Direction.Right;
         }
         else if (angle > angleThreshold && angle < 135)
         {
-            Debug.Log("Vuốt lên");
-            directionMove = Direction.Forward;
+            //forward
+            direction = Direction.Forward;
         }
         else if (angle > 135 || angle < -135)
         {
-            Debug.Log("Vuốt trái");
-            directionMove = Direction.Left;
+            //left
+            direction = Direction.Left;
 
         }
         else if (angle > -135 && angle < -45)
         {
-            Debug.Log("Vuốt xuống");
-            directionMove = Direction.Down;
+            //down
+            direction = Direction.Down;
+        }
+        if (!player.IsOnBridge || player.IsOnBridge && direction == OppositeDirection(directionMove))
+        {
+            directionMove = direction;
         }
     }
     private void Move()
     {
         Vector3 newPosition = transform.position;
-        while (!CheckWall() && timer > 0)
+        while (!CheckWallAndBridge() && timer > 0)
         {
             timer -= Time.deltaTime;
            
@@ -115,6 +114,7 @@ public class PlayerMovement : MonoBehaviour
                 }
             targetPosition = newPosition;
         }
+        brickOnBridge = 0; // tính lại 
 
         ChangeRotationPlayerVisual();
     }
@@ -159,13 +159,12 @@ public class PlayerMovement : MonoBehaviour
                 break;
             case Direction.Right:
                 playerVisual.localRotation = rightRot;
-
                 break;
             default:
                 break;
         }
     }
-    private bool CheckWall()
+    private bool CheckWallAndBridge()
     {
         float interactRange = 0.6f;
         Vector3 direction = GetDirection();
@@ -177,16 +176,25 @@ public class PlayerMovement : MonoBehaviour
                 Debug.Log("true");
                 return true;// đụng tường
             }
+            if(hit.transform.TryGetComponent(out Bridge bridge))
+            {
+                if (bridge.IsBrickEnable())
+                    return false;
+                if (player.BrickListCount > brickOnBridge)
+                {
+                    brickOnBridge++;
+                    return false;
+                }
+                return true;
+            }
         }
         return false;
     }
 
-    private Direction CheckDirection(Direction direction)
+    private Direction OppositeDirection(Direction direction)
     {
         switch (direction)
         {
-            case Direction.None:
-                break;
             case Direction.Forward:
                 return Direction.Down;
             case Direction.Down:

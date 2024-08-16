@@ -33,6 +33,7 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 5275980127943294086}
+  - {fileID: 221958007855246559}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!136 &5386540391646347249
@@ -73,6 +74,9 @@ MonoBehaviour:
   playerMovement: {fileID: 9082518859111599808}
   playerVisual: {fileID: 5275980127943294086}
   brickPerfab: {fileID: 77166679608861270, guid: de353a5d4279e5d4185cfa07aa609b80, type: 3}
+  checkBridge: {fileID: 221958007855246559}
+  anim: {fileID: 7763462061173186951}
+  checkThisBridge: {fileID: 0}
 --- !u!114 &9082518859111599808
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -88,6 +92,37 @@ MonoBehaviour:
   speed: 5
   player: {fileID: 3168928430627011125}
   playerVisual: {fileID: 5275980127943294086}
+--- !u!1 &4710143329678106367
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 221958007855246559}
+  m_Layer: 0
+  m_Name: forCheckOnBridge
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &221958007855246559
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4710143329678106367}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0.5, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 1331271516673832827}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1001 &7703752274831454357
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -464,5 +499,10 @@ PrefabInstance:
 --- !u!4 &5275980127943294086 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 2580899147284204563, guid: c84b41a4245d5c241bc7ff57b0cca3f4, type: 3}
+  m_PrefabInstance: {fileID: 7703752274831454357}
+  m_PrefabAsset: {fileID: 0}
+--- !u!95 &7763462061173186951 stripped
+Animator:
+  m_CorrespondingSourceObject: {fileID: 95809777293889810, guid: c84b41a4245d5c241bc7ff57b0cca3f4, type: 3}
   m_PrefabInstance: {fileID: 7703752274831454357}
   m_PrefabAsset: {fileID: 0}

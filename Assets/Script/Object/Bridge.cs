@@ -5,13 +5,12 @@ public class Bridge : MonoBehaviour
     [SerializeField] private Brick brickOnBridge;
     private void Start()
     {
-        brickOnBridge.HideVisual();
-        brickOnBridge.CollisionOff();
+        brickOnBridge.OnHideVisual(true);
+        brickOnBridge.OnHideCollision(true);
     }
-
     public void ShowBrickOnBridge()
     {
-        brickOnBridge.ShowVisual();
+        brickOnBridge.OnHideVisual(false);
     }
     public bool IsBrickEnable()
     {

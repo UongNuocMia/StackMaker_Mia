@@ -1,5 +1,3 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class CameraFollow : Singleton<CameraFollow>
@@ -15,8 +13,7 @@ public class CameraFollow : Singleton<CameraFollow>
 
     private void Update()
     {
-        if (target == null)
-            return;
-        transform.position = Vector3.Lerp(transform.position, target.position + offset, Time.deltaTime * speed);
+        if (target != null)
+            transform.position = Vector3.Lerp(transform.position, target.position + offset, Time.deltaTime * speed);
     }
 }

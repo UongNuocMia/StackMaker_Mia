@@ -1,8 +1,4 @@
-using System;
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.SocialPlatforms.Impl;
 
 public enum GameState { MainMenu, GamePlay, Finish, Setting }
 
@@ -43,7 +39,7 @@ public class GameManager : Singleton<GameManager>
 
     private void Start()
     {
-        currentLevel = 0;
+        currentLevel = Data.Instance.GetLevel();
         ChangeState(GameState.MainMenu);
         //UIManager.Ins.OpenUI<UIMainMenu>();
     }
@@ -85,19 +81,28 @@ public class GameManager : Singleton<GameManager>
         UIManager.Instance.OnFinishGame();
 
     }
+
+    public void OnNextLevel()
+    {
+        currentLevel++;
+        Data.Instance.SetLevel(currentLevel);
+        OnStartGame();
+    }
+    public void OnPlayAgain()
+    {
+        ChangeState(GameState.MainMenu);
+        Data.Instance.SetLevel(0);
+        currentLevel = 0;
+        OnStartGame();
+    }
     private void SetUpPlayer()
     {
         GameObject player = Instantiate(playerPrefab);
         player.transform.position = LevelManager.Instance.GetCurrentStartPoint();
         playerTransform = player.transform;
-        CameraFollow.Instance.FindPlayer(player.transform);
+        CameraFollow.Instance.FindPlayer(player.GetComponent<Player>().PlayerVisual);
     }
 
-
-    public int GetAllNumberOfBridge()
-    {
-        return GameObject.FindObjectsOfType(typeof(Bridge)).Length;
-    }
     private void DestroyCurrentPlayer()
     {
         if (playerTransform != null)
