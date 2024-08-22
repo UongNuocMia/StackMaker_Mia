@@ -73,7 +73,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   playerMovement: {fileID: 9082518859111599808}
   playerVisual: {fileID: 5275980127943294086}
-  brickPerfab: {fileID: 77166679608861270, guid: de353a5d4279e5d4185cfa07aa609b80, type: 3}
+  brickPerfab: {fileID: 8304178833417819744, guid: de353a5d4279e5d4185cfa07aa609b80, type: 3}
   checkBridge: {fileID: 221958007855246559}
   anim: {fileID: 7763462061173186951}
   checkThisBridge: {fileID: 0}

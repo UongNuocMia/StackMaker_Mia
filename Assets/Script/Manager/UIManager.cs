@@ -39,15 +39,15 @@ public class UIManager : Singleton<UIManager>
 
     public void BackToGame()
     {
+        GameManager.Instance.ChangeState(GameState.GamePlay);
         inGamePanelUI.gameObject.SetActive(true);
         settingPanelUI.gameObject.SetActive(false);
-        GameManager.Instance.OnSetting(false);
     }
     public void OnSetting()
     {
+        GameManager.Instance.ChangeState(GameState.Setting);
         settingPanelUI.gameObject.SetActive(true);
         inGamePanelUI.gameObject.SetActive(false);
-        GameManager.Instance.OnSetting(true);
     }
 
     public void EndGame()

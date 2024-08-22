@@ -5,16 +5,30 @@ public enum GameState { MainMenu, GamePlay, Finish, Setting }
 
 public class GameManager : Singleton<GameManager>
 {
-    [SerializeField] private GameObject playerPrefab;
+    [SerializeField] private Player playerPrefab;
     private Transform playerTransform;
     private static GameState gameState;
     public int currentLevel;
     public int score;
     public bool isTryAgain;
 
-    public static void ChangeState(GameState state)
+    public void ChangeState(GameState state)
     {
         gameState = state;
+        switch (state)
+        {
+            case GameState.MainMenu:
+                break;
+            case GameState.GamePlay:
+                break;
+            case GameState.Finish:
+                OnFinishGame();
+                break;
+            case GameState.Setting:
+                break;
+            default:
+                break;
+        }
     }
 
     public static bool IsState(GameState state) => gameState == state;
@@ -43,13 +57,6 @@ public class GameManager : Singleton<GameManager>
         ChangeState(GameState.MainMenu);
         //UIManager.Ins.OpenUI<UIMainMenu>();
     }
-    private void Update()
-    {
-        if (playerTransform != null && playerTransform.position == LevelManager.Instance.GetCurrentEndPoint())
-        {
-            OnFinishGame();
-        }
-    }
 
     public void OnStartGame()
     {
@@ -66,20 +73,10 @@ public class GameManager : Singleton<GameManager>
         UIManager.Instance.OnStartGame();
         ChangeState(GameState.GamePlay);
     }
-    public void OnSetting(bool isSetting)
-    {
-
-        if (isSetting)
-            ChangeState(GameState.Setting);
-        else
-            ChangeState(GameState.GamePlay);
-    }
-    public void OnFinishGame()
+    private void OnFinishGame()
     {
         Debug.Log("Let See");
-        ChangeState(GameState.Finish);
         UIManager.Instance.OnFinishGame();
-
     }
 
     public void OnNextLevel()
@@ -90,17 +87,16 @@ public class GameManager : Singleton<GameManager>
     }
     public void OnPlayAgain()
     {
-        ChangeState(GameState.MainMenu);
         Data.Instance.SetLevel(0);
         currentLevel = 0;
         OnStartGame();
     }
     private void SetUpPlayer()
     {
-        GameObject player = Instantiate(playerPrefab);
+        Player player = Instantiate(playerPrefab);
         player.transform.position = LevelManager.Instance.GetCurrentStartPoint();
         playerTransform = player.transform;
-        CameraFollow.Instance.FindPlayer(player.GetComponent<Player>().PlayerVisual);
+        CameraFollow.Instance.FindPlayer(player.PlayerVisual);
     }
 
     private void DestroyCurrentPlayer()

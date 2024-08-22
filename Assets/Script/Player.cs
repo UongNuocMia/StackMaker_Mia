@@ -9,14 +9,16 @@ public class Player : MonoBehaviour
     private string  IDLE_ANIM= "Idle";
     [SerializeField] private PlayerMovement playerMovement;
     [SerializeField] private Transform playerVisual;
-    [SerializeField] private Transform brickPerfab;
+    [SerializeField] private Brick brickPerfab;
     [SerializeField] private Transform checkBridge;
     [SerializeField] private Animator anim;
     private bool isOnBridge = false;
     private float heightOfBrick = 0.3f;
+    private float interactRange = 0.5f;
     private string currentAnimName;
-    private List<Transform> brickList = new();
     private Vector3 playerVisualHeight;
+    private Vector3 direction;
+    private List<Brick> brickList = new();
 
     public int BrickListCount => brickList.Count;
     public bool IsOnBridge => isOnBridge;
@@ -41,11 +43,8 @@ public class Player : MonoBehaviour
 
     public void RayCastScan()
     {
-        Debug.DrawRay(transform.position, Vector3.up * 0.5f, Color.red);
-
-        float interactRange = 0.5f;
-        Vector3 direction = playerMovement.GetDirection();
         RaycastHit hit;
+        direction = playerMovement.GetDirection();
         if (Physics.Raycast(transform.position, direction, out hit, interactRange))
         {
             if (hit.transform.TryGetComponent(out Brick brick))
@@ -71,9 +70,10 @@ public class Player : MonoBehaviour
     }
     private void AddBrick()
     {
-        Transform brickClone = Instantiate(brickPerfab, transform);
+        Brick brickClone = Instantiate(brickPerfab,transform);
         brickList.Add(brickClone);
-        brickClone.localPosition = Vector3.zero;
+        brickClone.transform.localPosition = Vector3.zero;
+        brickClone.OnHideCollision(true);
         GameManager.Instance.score++;
         HandlerBrickHeight();
         ChangeAnim(ADD_BRICK_ANIM);
@@ -87,6 +87,16 @@ public class Player : MonoBehaviour
         brickList.RemoveAt(lastIndex);
     }
 
+    private void ClearAllBrick()
+    {
+        if (brickList.Count == 0)
+            return;
+        for (int i = 0; i < brickList.Count; i++)
+        {
+            brickList[i].OnHideVisual(true);
+            brickList.Remove(brickList[i]);
+        }
+    }
     private void HandlerPlayerHeight()
     {
         if (isOnBridge && brickList.Count == 0)
@@ -107,7 +117,7 @@ public class Player : MonoBehaviour
         for (int i = 0; i < brickList.Count; i++)
         {
             newHeightY.y = Mathf.Abs(i * heightOfBrick);
-            brickList[i].localPosition = new Vector3(newHeightY.x, newHeightY.y);
+            brickList[i].transform.localPosition = new Vector3(newHeightY.x, newHeightY.y);
         }
     }
   
@@ -141,19 +151,16 @@ public class Player : MonoBehaviour
 
     protected void ChangeAnim(string animName)
     {
-        if (currentAnimName != animName)
-        {
-            anim.ResetTrigger(animName);
-            currentAnimName = animName;
-            anim.SetTrigger(currentAnimName);
-        }
+        anim.ResetTrigger(animName);
+        currentAnimName = animName;
+        anim.SetTrigger(currentAnimName);
     }
-
     private IEnumerator OnWinningCoroutine()
     {
+        ClearAllBrick();
         ChangeAnim(WIN_ANIM);
         yield return new WaitForSeconds(2f);
-        GameManager.Instance.OnFinishGame();
+        GameManager.Instance.ChangeState(GameState.Finish);
 
     }
 

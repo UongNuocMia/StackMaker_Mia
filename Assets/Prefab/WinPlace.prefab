@@ -10,7 +10,6 @@ GameObject:
   m_Component:
   - component: {fileID: 1149866822751187245}
   - component: {fileID: 7662093486431183546}
-  - component: {fileID: 4302626357400635319}
   m_Layer: 0
   m_Name: WinPlace
   m_TagString: Untagged
@@ -67,20 +66,8 @@ BoxCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Size: {x: 7.1068964, y: 5.3573937, z: 5.952507}
-  m_Center: {x: 0, y: 0.69, z: 9.25}
---- !u!114 &4302626357400635319
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1096394399607614391}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: be8b6aba17a6b904999185af15cd4710, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
+  m_Size: {x: 7, y: 6, z: 9.13}
+  m_Center: {x: 0, y: 0, z: 4}
 --- !u!1001 &615917504958858362
 PrefabInstance:
   m_ObjectHideFlags: 0
